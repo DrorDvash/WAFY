@@ -2,7 +2,10 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+import attack_xss
+import attack_csrf
 import time
+
 
 PATH = "C:\Program Files (x86)\chromedriver.exe"
 
