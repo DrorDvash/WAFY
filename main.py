@@ -6,17 +6,20 @@ import attack_xss
 import attack_csrf
 import time
 
-
 PATH = "C:\Program Files (x86)\chromedriver.exe"
 
 def main():
 
+    # Create driver and login to page.
     driver, target_url = init()
 
-    #search = driver.find_element_by_id("bug")
-    #print(search.text)
+    # Execute XSS Attacks
+    #attack_xss.execute()
 
-    time.sleep(5)
+    # Execute CSRF Attacks
+    # ...
+
+
     driver.quit()
 
 def init():
@@ -27,7 +30,7 @@ def init():
     with open("secret.txt") as file:
         target_url, username, password = file.read().splitlines()
 
-    # Make a login
+    # Login to website
     driver.get(target_url)
     element = driver.find_element_by_id("login")
     element.clear()
@@ -37,10 +40,6 @@ def init():
     element.send_keys(password, Keys.RETURN)
 
     return driver, target_url
-
-def xss_attacks(driver, target_url):
-    driver.get(target_url)
-
 
 if __name__ == '__main__':
     main()
