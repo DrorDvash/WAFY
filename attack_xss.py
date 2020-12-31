@@ -31,25 +31,10 @@ import time
 def execute(driver, target_url):
     #driver, target_url = init()  # to delete
 
-    # Get all relevant results
-    #relevant_attacks = read_all_attacks(driver)
-
     # Start to attack
     implement_attack(driver, target_url)
 
     driver.quit()
-
-
-# def read_all_attacks(driver):
-#     print("[+] Collecting Attacks")
-#     attack_type = "Cross-Site Scripting - "
-#     relevant_attacks = []
-#     elements = driver.find_elements_by_xpath("//form/select[@name='bug']/option")
-#     for item in elements:
-#         if attack_type in item.text:
-#             # Insert any result into list of lists eg: [ [obj, name, index], [obj, name, index] ]
-#             relevant_attacks.append([item, item.text, item.get_attribute("value")])
-#     return relevant_attacks
 
 
 def implement_attack(driver, target_url):
@@ -101,7 +86,7 @@ def implement_attack(driver, target_url):
 
             # Check for 'alert' box
             try:
-                WebDriverWait(driver, 5).until(EC.alert_is_present())
+                WebDriverWait(driver, 1).until(EC.alert_is_present())
                 alert = driver.switch_to.alert
                 alert.accept()
                 result_counter += 1

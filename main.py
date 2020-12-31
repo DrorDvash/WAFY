@@ -24,7 +24,17 @@ def main():
 
 def init():
     print("[+] Initializing")
-    driver = webdriver.Chrome(PATH)
+    options = webdriver.ChromeOptions()
+    # options.add_argument('no-sandbox')
+    # options.add_argument('--disable-gpu')
+    # options.add_argument('--window-size=200,200')
+    # options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--ignore-certificate-errors')
+    options.add_argument('--incognito')
+    options.add_argument('--headless')
+    driver = webdriver.Chrome(executable_path=PATH, options=options)
+
+    #driver = webdriver.Chrome(executable_path=PATH)
 
     # Import data about the target (url, username, password)
     with open("secret.txt") as file:
@@ -40,6 +50,12 @@ def init():
     element.send_keys(password, Keys.RETURN)
 
     return driver, target_url
+
+def attacks_poll(attack_name):
+
+    poll = []
+
+
 
 if __name__ == '__main__':
     main()
