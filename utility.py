@@ -11,18 +11,19 @@ from selenium.webdriver.support import expected_conditions as EC
 import pytesseract
 import sys
 import argparse
-try:
-    import Image
-except ImportError:
-    from PIL import Image
+# try:
+#     import Image
+# except ImportError:
+#     from PIL import Image
 from subprocess import check_output
 import urllib.request
 import time
-from PIL import Image, ImageEnhance, ImageFilter
-import pytesseract
-import cv2
+# from PIL import Image, ImageEnhance, ImageFilter
+# import pytesseract
+# import cv2
 import os
-
+import socket
+from urllib.parse import urlsplit
 
 def get_cookie_from_driver(driver):
     time.sleep(5)  # Wait Cookies To load
@@ -30,7 +31,6 @@ def get_cookie_from_driver(driver):
     return {c['name']: c['value'] for c in driver_cookies}
 
 def calculate_file_lines(file_path):
-
     with open(file_path, 'r', encoding='latin-1') as file:
         nonempty_lines = [line.strip("\n") for line in file if line != "\n"]
 
@@ -44,12 +44,18 @@ def clean_file_from_duplicates():
                 output_file.write(each_line)
                 lines_seen.add(each_line)
 
+def get_ip_addres_of_host(domainName):
+
+    try:
+        return socket.gethostbyname(domainName)
+    except:
+        return urlsplit(domainName).netloc
 
 
-def resolve(path):
-    print("Resampling the Image")
-    check_output(['convert', path, '-resample', '600', path])
-    return pytesseract.image_to_string(Image.open(path))
+# def resolve(path):
+#     print("Resampling the Image")
+#     check_output(['convert', path, '-resample', '600', path])
+#     return pytesseract.image_to_string(Image.open(path))
 
 # def get_captcha(driver):
 #     print('Getting Captha')
@@ -77,19 +83,19 @@ def resolve(path):
 #     # urllib.request.urlretrieve(src, "captcha.jpeg")
 
 
-def get_captcha(driver, element, path):
-    location = element.location
-    size = element.size
-    driver.save_screenshot(path)
-    image = Image.open(path)
-    left = location['x']
-    top = location['y']
-    right = location['x'] + size['width']
-    bottom = location['y'] + size['height']
-    image = image.crop((left, top, right, bottom))
-    image.save(path, 'png')
-    time.sleep(3)
-    get_text_from_pic()
+# def get_captcha(driver, element, path):
+#     location = element.location
+#     size = element.size
+#     driver.save_screenshot(path)
+#     image = Image.open(path)
+#     left = location['x']
+#     top = location['y']
+#     right = location['x'] + size['width']
+#     bottom = location['y'] + size['height']
+#     image = image.crop((left, top, right, bottom))
+#     image.save(path, 'png')
+#     time.sleep(3)
+#     get_text_from_pic()
 
     # im = Image.open('captcha.png')  # the second one
     # # im = im.filter(ImageFilter.MedianFilter())
