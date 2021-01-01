@@ -5,7 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 import A1_Injection
 #import A2_Broken_Authentication
 import A3_Cross_Site_Scripting_XSS
-#import A7_Missing_Functional_Level_Access_Control
+import A7_Missing_Functional_Level_Access_Control
 import textwrap
 import attack_csrf
 import time
@@ -45,7 +45,8 @@ def main():
 
         # Execute Missing Functional Level Access Control
         elif user_choice_main_menu == '7':
-            pass
+            driver, target_url = init()  # Create driver and login to website
+            A7_Missing_Functional_Level_Access_Control.execute(driver, target_url)
 
         # Execute All Together
         elif user_choice_main_menu == '9':

