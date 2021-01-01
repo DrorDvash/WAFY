@@ -71,9 +71,9 @@ def init():
     # options.add_argument('--disable-gpu')
     # options.add_argument('--window-size=200,200')
     # options.add_argument('--disable-dev-shm-usage')
-    options.add_argument('--ignore-certificate-errors')
-    options.add_argument('--incognito')
-    options.add_argument('--headless')
+    # options.add_argument('--ignore-certificate-errors')
+    # options.add_argument('--incognito')
+    # options.add_argument('--headless')
     driver = webdriver.Chrome(executable_path=PATH, options=options)
 
     #driver = webdriver.Chrome(executable_path=PATH)

