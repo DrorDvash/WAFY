@@ -101,7 +101,7 @@ def xxe_attack():
     driver_cookies = driver.get_cookies()
     c = {c['name']: c['value'] for c in driver_cookies}
 
-    with open('XXE_Payloads.txt', 'r', encoding='utf-8') as xxe_payloads:
+    with open('Payloads/XXE_Payloads.txt', 'r', encoding='utf-8') as xxe_payloads:
         payloads = xxe_payloads.read().split('\n\n')
 
         for payload in payloads:

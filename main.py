@@ -23,8 +23,6 @@ def main():
     [Q]  Quit
     '''
 
-
-
     while True:
         # Print menu
         print(textwrap.dedent(main_menu))

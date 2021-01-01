@@ -4,10 +4,10 @@ from selenium.common.exceptions import NoSuchElementException
 
 def execute(driver, target_url):
     # Start to attack
-    implement_attack(driver, target_url)
+    os_injection_attack(driver, target_url)
 
 
-def implement_attack(driver, target_url):
+def os_injection_attack(driver, target_url):
     print(f"[+] Running OS Injection Attacks")
     attack_url_page = "commandi.php"  # OS Command Injection
     success_counter = 0
