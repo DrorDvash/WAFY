@@ -6,7 +6,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-import attack_xss
+import A3_Cross_Site_Scripting_XSS
 import attack_csrf
 import time
 from attack_csrf import csrf_attack
