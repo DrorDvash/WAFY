@@ -8,7 +8,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 # def get_captcha(driver, element, path):
-# import pytesseract
+#import pytesseract
 import sys
 import argparse
 # try:

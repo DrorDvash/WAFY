@@ -31,7 +31,11 @@ def main():
         # Execute OS Injection Attacks
         if user_choice_main_menu == '1':
             driver, target_url = init()  # Create driver and login to website
+            t1 = time.perf_counter()  # Start timer
             A1_Injection.execute(driver, target_url)
+            t2 = time.perf_counter()  # Stop timer
+            print(f"Finish within {round(t2 - t1, 4)} seconds.")
+
             driver.quit()
 
         # Execute Broken Authentication Attacks
@@ -40,22 +44,34 @@ def main():
         # Execute XSS Attacks
         elif user_choice_main_menu == '3':
             driver, target_url = init()  # Create driver and login to website
+            t1 = time.perf_counter()  # Start timer
             A3_Cross_Site_Scripting_XSS.execute(driver, target_url)
+            t2 = time.perf_counter()  # Stop timer
+            print(f"Finish within {round(t2 - t1, 4)} seconds.")
             driver.quit()
 
         # Execute Missing Functional Level Access Control
         elif user_choice_main_menu == '7':
             driver, target_url = init()  # Create driver and login to website
+            t1 = time.perf_counter()  # Start timer
             A7_Missing_Functional_Level_Access_Control.execute(driver, target_url)
+            t2 = time.perf_counter()  # Stop timer
+            print(f"Finish within {round(t2 - t1, 4)} seconds.")
+
 
         # Execute All Together
         elif user_choice_main_menu == '9':
             driver, target_url = init()  # Create driver and login to website
+            t1 = time.perf_counter()  # Start timer
+
             A1_Injection.execute(driver, target_url)
             #..
             A3_Cross_Site_Scripting_XSS.execute(driver, target_url)
             #..
             #..
+
+            t2 = time.perf_counter()  # Stop timer
+            print(f"Finish within {round(t2 - t1, 4)} seconds.")
             driver.quit()
 
         elif user_choice_main_menu.lower() == 'q':
@@ -72,9 +88,9 @@ def init():
     # options.add_argument('--disable-gpu')
     # options.add_argument('--window-size=200,200')
     # options.add_argument('--disable-dev-shm-usage')
-    # options.add_argument('--ignore-certificate-errors')
-    # options.add_argument('--incognito')
-    # options.add_argument('--headless')
+    options.add_argument('--ignore-certificate-errors')
+    options.add_argument('--incognito')
+    options.add_argument('--headless')
     driver = webdriver.Chrome(executable_path=PATH, options=options)
 
     #driver = webdriver.Chrome(executable_path=PATH)
