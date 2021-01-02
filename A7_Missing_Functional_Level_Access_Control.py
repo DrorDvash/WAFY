@@ -26,7 +26,7 @@ def lfi_rfi_attack(driver, target_url):
 
 
     # Getting Payloads and starting to inject into WAF
-    with open(payload_path, 'r', encoding='utf-8') as lfi_payloads:
+    with open(payload_path, 'r', encoding='cp1252') as lfi_payloads:
 
         for payload in lfi_payloads:
             attack_url_page = target_url + f'directory_traversal_2.php?directory={payload}'
