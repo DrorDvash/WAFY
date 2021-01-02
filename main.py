@@ -1,31 +1,29 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
 import A1_Injection
-#import A2_Broken_Authentication
 import A3_Cross_Site_Scripting_XSS
 import A7_Missing_Functional_Level_Access_Control
 import textwrap
-import attack_csrf
 import time
+from prettytable import PrettyTable
 
 
-PATH = "C:\Program Files (x86)\chromedriver.exe"
+PATH = r"C:\Program Files (x86)\chromedriver.exe"
+
 
 def main():
     main_menu = '''
-    [1]  Run 'A1 Injections'
-    [2]  Run 'A2 Broken Authentication'
-    [3]  Run 'A3 Cross Site Scripting (XSS)'
-    [7]  Run 'A7 Missing Functional Level Access Control'
-    [9]  Run All
+    [1] Injections {OS, HTML, iFrame Injections}
+    [2] Cross Site Scripting {XSS}
+    [3] Missing Functional Level Access Control {LFI/RFI, SSRF, XXE}
+    [9] *Run All*
     [Q]  Quit
     '''
 
     while True:
         # Print menu
-        print(textwrap.dedent(main_menu))
+        #print(textwrap.dedent(main_menu))
+        print_menu()
         user_choice_main_menu = input("Choose Option --> ")
 
         # Execute OS Injection Attacks
@@ -38,11 +36,8 @@ def main():
 
             driver.quit()
 
-        # Execute Broken Authentication Attacks
-        elif user_choice_main_menu == '2':
-            pass
         # Execute XSS Attacks
-        elif user_choice_main_menu == '3':
+        elif user_choice_main_menu == '2':
             driver, target_url = init()  # Create driver and login to website
             t1 = time.perf_counter()  # Start timer
             A3_Cross_Site_Scripting_XSS.execute(driver, target_url)
@@ -51,25 +46,22 @@ def main():
             driver.quit()
 
         # Execute Missing Functional Level Access Control
-        elif user_choice_main_menu == '7':
+        elif user_choice_main_menu == '3':
             driver, target_url = init()  # Create driver and login to website
             t1 = time.perf_counter()  # Start timer
             A7_Missing_Functional_Level_Access_Control.execute(driver, target_url)
             t2 = time.perf_counter()  # Stop timer
             print(f"Finish within {round(t2 - t1, 4)} seconds.")
 
-
         # Execute All Together
         elif user_choice_main_menu == '9':
             driver, target_url = init()  # Create driver and login to website
+
             t1 = time.perf_counter()  # Start timer
 
             A1_Injection.execute(driver, target_url)
-            #..
             A3_Cross_Site_Scripting_XSS.execute(driver, target_url)
-            #..
             A7_Missing_Functional_Level_Access_Control.execute(driver, target_url)
-            #..
 
             t2 = time.perf_counter()  # Stop timer
             print(f"Finish within {round(t2 - t1, 4)} seconds.")
@@ -89,12 +81,10 @@ def init():
     # options.add_argument('--disable-gpu')
     # options.add_argument('--window-size=200,200')
     # options.add_argument('--disable-dev-shm-usage')
-    options.add_argument('--ignore-certificate-errors')
-    options.add_argument('--incognito')
-    options.add_argument('--headless')
+    # options.add_argument('--ignore-certificate-errors')
+    # options.add_argument('--incognito')
+    # options.add_argument('--headless')
     driver = webdriver.Chrome(executable_path=PATH, options=options)
-
-    #driver = webdriver.Chrome(executable_path=PATH)
 
     # Import data about the target (url, username, password)
     with open("secret.txt") as file:
@@ -111,7 +101,17 @@ def init():
 
     return driver, target_url
 
+def print_menu():
+    x = PrettyTable()
+    x.field_names = ["No.", "Name", "Attacks"]
+    x.add_row(["[1]", "Injections", "OS, HTML, iFrame"])
+    x.add_row(["[2]", "Cross-Site Scripting", "XSS"])
+    x.add_row(["[3]", "Unauthorized Access Control", "LFI/RFI, SSRF, XXE"])
+    x.add_row(["[9]", "Run All", ""])
+    x.add_row(["[Q]", "Quit", ""])
+    x.align["Name"] = "l"
+    x.align["Attacks"] = "l"
+    print(x)
 
 if __name__ == '__main__':
     main()
-
