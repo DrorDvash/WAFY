@@ -15,7 +15,7 @@ def execute(driver, target_url):
 
 
 def lfi_rfi_attack(driver, target_url):
-    print(f"[+] Lfi / Rfi Injection Attacks")
+    print(f"[+] LFI / RFI Injection Attacks")
     payload_path = './Payloads/LFI_RFI_Injections.txt'
 
     # Adjust URL Injection Speed if needed, Lower is quicker
