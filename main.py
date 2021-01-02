@@ -12,17 +12,9 @@ PATH = r"C:\Program Files (x86)\chromedriver.exe"
 
 
 def main():
-    main_menu = '''
-    [1] Injections {OS, HTML, iFrame Injections}
-    [2] Cross Site Scripting {XSS}
-    [3] Missing Functional Level Access Control {LFI/RFI, SSRF, XXE}
-    [9] *Run All*
-    [Q]  Quit
-    '''
 
     while True:
         # Print menu
-        #print(textwrap.dedent(main_menu))
         print_menu()
         user_choice_main_menu = input("Choose Option --> ")
 
