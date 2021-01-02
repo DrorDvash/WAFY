@@ -4,7 +4,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 import requests
-from utility import get_cookie_from_driver, calculate_file_lines, get_ip_addres_of_host
+import utility
 
 
 def execute(driver, target_url):
@@ -12,6 +12,7 @@ def execute(driver, target_url):
     lfi_rfi_attack(driver, target_url)
     ssrf_attack(driver, target_url)
     xxe_attack(driver, target_url)
+
 
 def lfi_rfi_attack(driver, target_url):
     print(f"[+] Lfi / Rfi Injection Attacks")
@@ -21,9 +22,8 @@ def lfi_rfi_attack(driver, target_url):
     injection_speed = 1
 
     # Calculate Amount Of PayLoads
-    lines = calculate_file_lines(payload_path)
+    lines = utility.calculate_file_lines(payload_path)
     blocked_by_waf_counter = 0
-
 
     # Getting Payloads and starting to inject into WAF
     with open(payload_path, 'r', encoding='cp1252') as lfi_payloads:
@@ -33,12 +33,13 @@ def lfi_rfi_attack(driver, target_url):
             time.sleep(injection_speed)
             driver.get(attack_url_page)
             try:
-                # Catch WAF Blocking page
-                waf_block_message = driver.find_element_by_xpath("/html/body/center/h1").text
-                if "403 Forbidden" == waf_block_message:
+                # Check if attack blocked by waf
+                utility.check_if_element_exists(driver, "xpath", "/html/body/center/h1")
+                if "403 Forbidden" == driver.find_element_by_xpath("/html/body/center/h1").text:
                     blocked_by_waf_counter += 1
             except NoSuchElementException:
-                print('[+] Path Traversal Attack passed: ', payload.strip())
+                print("ERROR!")
+                #print('[+] Path Traversal Attack passed: ', payload.strip())
 
     # for file in file_list:
     #     attack_url_page = target_url + f'directory_traversal_1.php?page={file}'
@@ -55,8 +56,6 @@ def lfi_rfi_attack(driver, target_url):
         print(f"\n[!] ~~~Local File Inclusion / Remote File Inclusion [LFI / RFI] Results~~~ [!]")
         print('Attacks Blocked by WAF: ', blocked_by_waf_counter)
         print(f"[+] Total Successful Attacks: ", lines - blocked_by_waf_counter)
-
-    driver.quit()
 
 
 def ssrf_attack(driver, target_url):
@@ -75,8 +74,8 @@ def ssrf_attack(driver, target_url):
     print(f"[+] SSRF Injection Attacks")
 
     payload_path = './Payloads/SSRF_Payloads.txt'
-    MACHINE_IP = get_ip_addres_of_host(target_url)
-    lines = calculate_file_lines(payload_path)
+    MACHINE_IP = utility.get_ip_addres_of_host(target_url)
+    lines = utility.calculate_file_lines(payload_path)
     injection_speed = 3
     blocked_by_waf_counter = 0
 
@@ -93,26 +92,27 @@ def ssrf_attack(driver, target_url):
                 # If Alert: switch_to.alert for switching to alert and accept
                 alert_popped = driver.switch_to.alert
                 if alert_popped:
-                    print('[+] Server Side Request passed: ', payload)
+                    # print('[+] Server Side Request passed: ', payload)
                     blocked_by_waf_counter += 1
                     time.sleep(injection_speed)
                     alert_popped.accept()
 
             except TimeoutException:
                 try:
-                    # Catch WAF Blocking page
-                    waf_block_message = driver.find_element_by_xpath("/html/body/center/h1").text
-                    if "403 Forbidden" == waf_block_message:
+                    # Check if attack blocked by waf
+                    utility.check_if_element_exists(driver, "xpath", "/html/body/center/h1")
+                    if "403 Forbidden" == driver.find_element_by_xpath("/html/body/center/h1").text:
                         blocked_by_waf_counter += 1
                 except NoSuchElementException:
-                    print('[+] Server Side Request passed: ', payload)
+                    print("ERROR!")
+                    # print('[+] Server Side Request passed: ', payload)
 
     # Statistics #
     time.sleep(injection_speed)
     print(f"\n[!] ~~~Server Side Request Forgery [ SSRF ] Results~~~ [!]")
     print('Attacks Blocked by WAF: ',  blocked_by_waf_counter)
     print(f"[+] Total Successful Attacks: ", lines - blocked_by_waf_counter)
-    driver.quit()
+
 
 def xxe_attack(driver, target_url):
 
@@ -125,14 +125,13 @@ def xxe_attack(driver, target_url):
 
     payload_path = 'Payloads/XXE_Payloads.txt'
 
-
     injection_speed = 3
     blocked_by_waf_counter = 0
 
     driver.get(target_url + 'xxe-1.php')
 
     time.sleep(injection_speed)  # Wait Cookies To load
-    driver_cookies = get_cookie_from_driver(driver)
+    driver_cookies = utility.get_cookie_from_driver(driver)
 
     with open(payload_path, 'r', encoding='utf-8') as xxe_payloads:
 
@@ -146,10 +145,8 @@ def xxe_attack(driver, target_url):
             else:
                 blocked_by_waf_counter += 1
 
-
         # Statistics #
         time.sleep(injection_speed)
         print(f"\n[!] ~~~XML external entity [ XXE ] Results~~~ [!]")
         print('Attacks Blocked by WAF: ', blocked_by_waf_counter)
         print(f"[+] Total Successful Attacks: ", lines - blocked_by_waf_counter)
-        driver.quit()

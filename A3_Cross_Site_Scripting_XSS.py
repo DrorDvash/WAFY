@@ -3,6 +3,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException, ElementClickInterceptedException
 from selenium.common.exceptions import NoSuchElementException
+import utility
 
 
 def execute(driver, target_url):
@@ -68,7 +69,7 @@ def implement_attack(driver, target_url):
             except TimeoutException:
                 # look for any element with id="xss", click it and check for 'alert' box
                 try:
-                    if check_if_element_exists(driver, "id", "xss"):
+                    if utility.check_if_element_exists(driver, "id", "xss"):
                         el = driver.find_element_by_id("xss")
                         #ActionChains(driver).move_to_element(el).perform()
                         el.click()
@@ -78,7 +79,7 @@ def implement_attack(driver, target_url):
                         success_counter += 1
 
                     # Check if attack blocked by waf
-                    elif check_if_element_exists(driver, "xpath", "/html/body/center/h1"):
+                    elif utility.check_if_element_exists(driver, "xpath", "/html/body/center/h1"):
                         if "403 Forbidden" == driver.find_element_by_xpath("/html/body/center/h1").text:
                             blocked_by_waf_counter += 1
                 except NoSuchElementException:
@@ -96,21 +97,3 @@ def implement_attack(driver, target_url):
     print(f"[+] Total Successful Attacks:", sum)
     print(f"[+] Total Blocked By WAF:", blocked_by_waf_counter)
     print(f"[+] Total Failed Attacks:", len(xss_level_1+xss_level_2+xss_level_3+xss_level_4) - blocked_by_waf_counter - sum)
-
-
-def check_if_element_exists(driver, find_by, value, get_att=False, att_value=""):
-    try:
-        if find_by == "id":
-            driver.find_element_by_id(value).get_attribute(att_value) if get_att else driver.find_element_by_id(value)
-        elif find_by == "name":
-            driver.find_element_by_name(value).get_attribute(att_value) if get_att != "" else driver.find_element_by_name(value)
-        elif find_by == "tag_name":
-            driver.find_element_by_tag_name(value).get_attribute(att_value) if get_att != "" else driver.find_element_by_tag_name(value)
-        elif find_by == "xpath":
-            driver.find_element_by_xpath(value).get_attribute(att_value) if get_att != "" else driver.find_element_by_xpath(value)
-        else:
-            print("Unknown element name")
-            return False
-        return True
-    except NoSuchElementException:
-        return False
