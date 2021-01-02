@@ -3,8 +3,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException, ElementClickInterceptedException
 from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.common.action_chains import ActionChains
-import time
 
 
 def execute(driver, target_url):
@@ -78,6 +76,7 @@ def implement_attack(driver, target_url):
                         alert = driver.switch_to.alert
                         alert.accept()
                         success_counter += 1
+
                     # Check if attack blocked by waf
                     elif check_if_element_exists(driver, "xpath", "/html/body/center/h1"):
                         if "403 Forbidden" == driver.find_element_by_xpath("/html/body/center/h1").text:

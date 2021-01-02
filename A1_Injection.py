@@ -4,9 +4,9 @@ from selenium.common.exceptions import NoSuchElementException
 
 def execute(driver, target_url):
     # Start to attack
-    #os_injection_attack(driver, target_url)
+    os_injection_attack(driver, target_url)
     html_injection_attack(driver, target_url)
-    #iframe_injection_attack(driver, target_url)
+    iframe_injection_attack(driver, target_url)
 
 
 def os_injection_attack(driver, target_url):
@@ -22,13 +22,16 @@ def os_injection_attack(driver, target_url):
             try:
                 # Load page
                 driver.get(target_url + attack_url_page)
+
                 # Send payload
                 driver.find_element_by_id("target").clear()
                 driver.find_element_by_id("target").send_keys(";"+payload, Keys.RETURN)
+
                 # Look for success
                 if check_if_element_exists(driver, "xpath", "//div[@id='main']/p[@align='left']"):
                     if "Server: 127.0.0.53" not in driver.find_element_by_xpath("//div[@id='main']/p[@align='left']").text:
                         success_counter += 1
+
                 # Check if attack blocked by waf
                 elif check_if_element_exists(driver, "xpath", "/html/body/center/h1"):
                     if "403 Forbidden" == driver.find_element_by_xpath("/html/body/center/h1").text:
@@ -55,11 +58,6 @@ def html_injection_attack(driver, target_url):
             try:
                 # Load page
                 driver.get(target_url + attack_url_page)
-
-                # Change Security Level
-                # driver.find_element_by_name("security_level").click()
-                # driver.find_element_by_xpath("//select[@name='security_level']/option[@value='1']").click()
-                # driver.find_element_by_name("form_security_level").click()
 
                 # Send payload
                 driver.find_element_by_id("firstname").clear()
@@ -100,6 +98,7 @@ def iframe_injection_attack(driver, target_url):
             if check_if_element_exists(driver, "tag_name", "iframe", True, "src"):
                 if "attacker" in driver.find_element_by_tag_name("iframe").get_attribute("src") or check_if_element_exists(driver, "id", "attacker"):
                     success_counter += 1
+
             # Check if attack blocked by waf
             elif check_if_element_exists(driver, "xpath", "/html/body/center/h1"):
                 if "403 Forbidden" == driver.find_element_by_xpath("/html/body/center/h1").text:

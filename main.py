@@ -1,12 +1,10 @@
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 import A1_Injection
 import A3_Cross_Site_Scripting_XSS
 import A7_Missing_Functional_Level_Access_Control
-import textwrap
-import time
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 from prettytable import PrettyTable
-
+import time
 
 PATH = r"C:\Program Files (x86)\chromedriver.exe"
 
@@ -69,14 +67,11 @@ def main():
 def init():
     print("[+] Initializing")
     options = webdriver.ChromeOptions()
-    # options.add_argument('no-sandbox')
-    # options.add_argument('--disable-gpu')
-    # options.add_argument('--window-size=200,200')
-    # options.add_argument('--disable-dev-shm-usage')
     # options.add_argument('--ignore-certificate-errors')
     # options.add_argument('--incognito')
     # options.add_argument('--headless')
-    driver = webdriver.Chrome(executable_path=PATH, options=options)
+    #driver = webdriver.Chrome(executable_path=PATH, options=options)
+    driver = webdriver.Chrome(options=options)
 
     # Import data about the target (url, username, password)
     with open("secret.txt") as file:
