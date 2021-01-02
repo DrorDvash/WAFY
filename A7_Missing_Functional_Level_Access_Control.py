@@ -1,4 +1,3 @@
-from main import init
 import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -7,9 +6,7 @@ from selenium.common.exceptions import NoSuchElementException
 import requests
 from utility import get_cookie_from_driver, calculate_file_lines, get_ip_addres_of_host
 
-"""
 
-"""
 def execute(driver, target_url):
     # Start to attack
     lfi_rfi_attack(driver, target_url)
@@ -148,12 +145,8 @@ def xxe_attack(driver, target_url):
                 print('[+] XML external entity passed: ', payload)
             else:
                 blocked_by_waf_counter += 1
-            # if res.text.split('\n')[-1] == 'An error occured!':
-            #     print('[+] XXE Attack Passed: ', payload)
 
 
-        # for row in xxe_payloads.read().split('*'):
-        #     print(row)
         # Statistics #
         time.sleep(injection_speed)
         print(f"\n[!] ~~~XML external entity [ XXE ] Results~~~ [!]")
