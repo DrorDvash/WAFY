@@ -34,12 +34,12 @@ def lfi_rfi_attack(driver, target_url):
             driver.get(attack_url_page)
             try:
                 # Check if attack blocked by waf
-                utility.check_if_element_exists(driver, "xpath", "/html/body/center/h1")
-                if "403 Forbidden" == driver.find_element_by_xpath("/html/body/center/h1").text:
-                    blocked_by_waf_counter += 1
+                if utility.check_if_element_exists(driver, "xpath", "/html/body/center/h1"):
+                    if "403 Forbidden" == driver.find_element_by_xpath("/html/body/center/h1").text:
+                        blocked_by_waf_counter += 1
             except NoSuchElementException:
                 print("ERROR!")
-                #print('[+] Path Traversal Attack passed: ', payload.strip())
+                # print('[+] Path Traversal Attack passed: ', payload.strip())
 
     # for file in file_list:
     #     attack_url_page = target_url + f'directory_traversal_1.php?page={file}'
@@ -100,9 +100,9 @@ def ssrf_attack(driver, target_url):
             except TimeoutException:
                 try:
                     # Check if attack blocked by waf
-                    utility.check_if_element_exists(driver, "xpath", "/html/body/center/h1")
-                    if "403 Forbidden" == driver.find_element_by_xpath("/html/body/center/h1").text:
-                        blocked_by_waf_counter += 1
+                    if utility.check_if_element_exists(driver, "xpath", "/html/body/center/h1"):
+                        if "403 Forbidden" == driver.find_element_by_xpath("/html/body/center/h1").text:
+                            blocked_by_waf_counter += 1
                 except NoSuchElementException:
                     print("ERROR!")
                     # print('[+] Server Side Request passed: ', payload)
@@ -140,9 +140,7 @@ def xxe_attack(driver, target_url):
 
         for payload in payloads:
             res = requests.post(target_url + '/xxe-1.php', cookies=driver_cookies, data=payload)
-            if res.status_code == 200:
-                print('[+] XML external entity passed: ', payload)
-            else:
+            if res.status_code == 403:
                 blocked_by_waf_counter += 1
 
         # Statistics #
