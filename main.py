@@ -68,6 +68,7 @@ def main():
             #..
             A3_Cross_Site_Scripting_XSS.execute(driver, target_url)
             #..
+            A7_Missing_Functional_Level_Access_Control.execute(driver, target_url)
             #..
 
             t2 = time.perf_counter()  # Stop timer
