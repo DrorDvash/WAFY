@@ -39,6 +39,7 @@ def lfi_rfi_attack(driver, target_url):
                         blocked_by_waf_counter += 1
             except NoSuchElementException:
                 print("ERROR!")
+                utility.write_to_log('LFI / RFI', payload)
                 # print('[+] Path Traversal Attack passed: ', payload.strip())
 
     # for file in file_list:
@@ -76,7 +77,7 @@ def ssrf_attack(driver, target_url):
     payload_path = './Payloads/SSRF_Payloads.txt'
     MACHINE_IP = utility.get_ip_addres_of_host(target_url)
     lines = utility.calculate_file_lines(payload_path)
-    injection_speed = 3
+    injection_speed = 2
     blocked_by_waf_counter = 0
 
     # Getting Payloads and starting to inject into WAF
@@ -95,6 +96,7 @@ def ssrf_attack(driver, target_url):
                     # print('[+] Server Side Request passed: ', payload)
                     blocked_by_waf_counter += 1
                     time.sleep(injection_speed)
+                    utility.write_to_log('SSRF', payload)
                     alert_popped.accept()
 
             except TimeoutException:
@@ -103,6 +105,9 @@ def ssrf_attack(driver, target_url):
                     if utility.check_if_element_exists(driver, "xpath", "/html/body/center/h1"):
                         if "403 Forbidden" == driver.find_element_by_xpath("/html/body/center/h1").text:
                             blocked_by_waf_counter += 1
+                    else:
+                        utility.write_to_log('SSRF', payload)
+
                 except NoSuchElementException:
                     print("ERROR!")
                     # print('[+] Server Side Request passed: ', payload)
@@ -142,6 +147,8 @@ def xxe_attack(driver, target_url):
             res = requests.post(target_url + '/xxe-1.php', cookies=driver_cookies, data=payload)
             if res.status_code == 403:
                 blocked_by_waf_counter += 1
+            elif res.status_code == 200:
+                utility.write_to_log('XXE', payload)
 
         # Statistics #
         time.sleep(injection_speed)

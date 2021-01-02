@@ -47,9 +47,11 @@ def check_if_element_exists(driver, find_by, value, get_att=False, att_value="")
         return False
 
 def write_to_log(attack, payload) -> None:
-    with open('./log.txt', 'a', encoding='utf-8') as log:
-        log.write(f'[+] {attack} Payload passed: ', payload)
+
+    with open('log.txt', 'a', encoding='utf-8') as log:
+        log.write(f'[+] [{attack}] Payload passed: {payload}')
 
 def clean_log():
-    with open('./log.txt', "w"):
+
+    with open('log.txt', "w"):
         pass

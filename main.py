@@ -13,8 +13,6 @@ PATH = r"C:\Program Files (x86)\chromedriver.exe"
 def main():
 
     while True:
-        # Clean Log File
-        utility.clean_log()
         # Print menu
         print_menu()
         user_choice_main_menu = input("Choose Option --> ")
@@ -69,6 +67,9 @@ def main():
 
 def init():
     print("[+] Initializing")
+    # Clean Log File
+    utility.clean_log()
+
     options = webdriver.ChromeOptions()
     # options.add_argument('--ignore-certificate-errors')
     # options.add_argument('--incognito')

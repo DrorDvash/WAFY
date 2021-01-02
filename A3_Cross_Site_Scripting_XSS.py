@@ -66,6 +66,7 @@ def implement_attack(driver, target_url):
                 alert = driver.switch_to.alert
                 alert.accept()
                 success_counter += 1
+                utility.write_to_log('XSS', payload)
             except TimeoutException:
                 # look for any element with id="xss", click it and check for 'alert' box
                 try:
@@ -77,6 +78,7 @@ def implement_attack(driver, target_url):
                         alert = driver.switch_to.alert
                         alert.accept()
                         success_counter += 1
+                        utility.write_to_log('XSS', payload)
 
                     # Check if attack blocked by waf
                     elif utility.check_if_element_exists(driver, "xpath", "/html/body/center/h1"):
