@@ -15,11 +15,11 @@ def execute(driver, target_url):
 
 
 def lfi_rfi_attack(driver, target_url):
-    print(f"[+] LFI / RFI Injection Attacks")
+    print(f"\n[+] Running LFI / RFI Injection Attacks")
     payload_path = './Payloads/LFI_RFI_Injections.txt'
 
     # Adjust URL Injection Speed if needed, Lower is quicker
-    injection_speed = 1
+    injection_speed = 0.5
 
     # Calculate Amount Of PayLoads
     lines = utility.calculate_file_lines(payload_path)
@@ -71,7 +71,7 @@ def ssrf_attack(driver, target_url):
         [+] Server Side Request passed:  localtest.me
         [+] Server Side Request passed:  sub1.sub2.sub3.localtest.me
     """
-    print(f"[+] SSRF Injection Attacks")
+    print(f"\n[+] Running SSRF Injection Attacks")
 
     payload_path = './Payloads/SSRF_Payloads.txt'
     MACHINE_IP = utility.get_ip_addres_of_host(target_url)
@@ -110,8 +110,8 @@ def ssrf_attack(driver, target_url):
     # Statistics #
     time.sleep(injection_speed)
     print(f"\n[!] ~~~Server Side Request Forgery [ SSRF ] Results~~~ [!]")
-    print('Attacks Blocked by WAF: ',  blocked_by_waf_counter)
-    print(f"[+] Total Successful Attacks: ", lines - blocked_by_waf_counter)
+    print(f"[+] Total Successful Attacks:", lines - blocked_by_waf_counter)
+    print(f"[+] Attacks Blocked by WAF:", blocked_by_waf_counter)
 
 
 def xxe_attack(driver, target_url):
@@ -121,7 +121,7 @@ def xxe_attack(driver, target_url):
         Might be False positive?
     """
 
-    print('[+] XXE Attack Start')
+    print('\n[+] Running XXE Attack Start')
 
     payload_path = 'Payloads/XXE_Payloads.txt'
 
@@ -146,5 +146,5 @@ def xxe_attack(driver, target_url):
         # Statistics #
         time.sleep(injection_speed)
         print(f"\n[!] ~~~XML external entity [ XXE ] Results~~~ [!]")
-        print('Attacks Blocked by WAF: ', blocked_by_waf_counter)
-        print(f"[+] Total Successful Attacks: ", lines - blocked_by_waf_counter)
+        print(f"[+] Total Successful Attacks:", lines - blocked_by_waf_counter)
+        print(f"[+] Attacks Blocked by WAF:", blocked_by_waf_counter)
