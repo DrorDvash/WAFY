@@ -5,7 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from prettytable import PrettyTable
 import time
-from utility import clean_log
+import utility
 
 PATH = r"C:\Program Files (x86)\chromedriver.exe"
 
@@ -14,7 +14,7 @@ def main():
 
     while True:
         # Clean Log File
-        clean_log()
+        utility.clean_log()
         # Print menu
         print_menu()
         user_choice_main_menu = input("Choose Option --> ")
