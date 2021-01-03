@@ -41,18 +41,6 @@ def lfi_rfi_attack(driver, target_url):
                     Utility.write_to_log('LFI / RFI', payload)
             except NoSuchElementException:
                 print("ERROR!")
-                # print('[+] Path Traversal Attack passed: ', payload.strip())
-
-    # for file in file_list:
-    #     attack_url_page = target_url + f'directory_traversal_1.php?page={file}'
-    #     driver.get(attack_url_page)
-    #     try:
-    #         # Catch WAF Blocking page
-    #         waf_block_message = driver.find_element_by_xpath("/html/body/center/h1").text
-    #         if "403 Forbidden" == waf_block_message:
-    #             blocked_by_waf_counter += 1
-    #     except NoSuchElementException:
-    #         print('[+] Path Traversal Attack passed: ', file)
 
         time.sleep(injection_speed)
         print(f"\n[!] ~~~Local File Inclusion / Remote File Inclusion [LFI / RFI] Results~~~ [!]")
