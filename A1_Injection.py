@@ -98,7 +98,7 @@ def iframe_injection_attack(driver, target_url):
 
             # Look for success
             if utility.check_if_element_exists(driver, "tag_name", "iframe", True, "src"):
-                if "attacker" in driver.find_element_by_tag_name("iframe").get_attribute("src") or check_if_element_exists(driver, "id", "attacker"):
+                if "attacker" in driver.find_element_by_tag_name("iframe").get_attribute("src") or utility.check_if_element_exists(driver, "id", "attacker"):
                     success_counter += 1
                     utility.write_to_log('IFRAME Injection', payload + '\n')
 
