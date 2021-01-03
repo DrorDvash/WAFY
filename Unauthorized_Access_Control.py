@@ -1,10 +1,10 @@
-import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
+import time
 import requests
-import utility
+import Utility
 
 
 def execute(driver, target_url):
@@ -16,13 +16,13 @@ def execute(driver, target_url):
 
 def lfi_rfi_attack(driver, target_url):
     print(f"\n[+] Running LFI / RFI Injection Attacks")
-    payload_path = './Payloads/LFI_RFI_Injections.txt'
+    payload_path = 'Payloads/LFI_RFI_Injections.txt'
 
     # Adjust URL Injection Speed if needed, Lower is quicker
     injection_speed = 0.5
 
     # Calculate Amount Of PayLoads
-    lines = utility.calculate_file_lines(payload_path)
+    lines = Utility.calculate_file_lines(payload_path)
     blocked_by_waf_counter = 0
 
     # Getting Payloads and starting to inject into WAF
@@ -34,11 +34,11 @@ def lfi_rfi_attack(driver, target_url):
             driver.get(attack_url_page)
             try:
                 # Check if attack blocked by waf
-                if utility.check_if_element_exists(driver, "xpath", "/html/body/center/h1"):
+                if Utility.check_if_element_exists(driver, "xpath", "/html/body/center/h1"):
                     if "403 Forbidden" == driver.find_element_by_xpath("/html/body/center/h1").text:
                         blocked_by_waf_counter += 1
                 else:
-                    utility.write_to_log('LFI / RFI', payload)
+                    Utility.write_to_log('LFI / RFI', payload)
             except NoSuchElementException:
                 print("ERROR!")
                 # print('[+] Path Traversal Attack passed: ', payload.strip())
@@ -56,8 +56,8 @@ def lfi_rfi_attack(driver, target_url):
 
         time.sleep(injection_speed)
         print(f"\n[!] ~~~Local File Inclusion / Remote File Inclusion [LFI / RFI] Results~~~ [!]")
-        print('Attacks Blocked by WAF: ', blocked_by_waf_counter)
         print(f"[+] Total Successful Attacks: ", lines - blocked_by_waf_counter)
+        print(f"[+] Attacks Blocked by WAF:", blocked_by_waf_counter)
 
 
 def ssrf_attack(driver, target_url):
@@ -75,9 +75,9 @@ def ssrf_attack(driver, target_url):
     """
     print(f"\n[+] Running SSRF Injection Attacks")
 
-    payload_path = './Payloads/SSRF_Payloads.txt'
-    MACHINE_IP = utility.get_ip_addres_of_host(target_url)
-    lines = utility.calculate_file_lines(payload_path)
+    payload_path = 'Payloads/SSRF_Payloads.txt'
+    machine_ip = Utility.get_ip_address_of_host(target_url)
+    lines = Utility.calculate_file_lines(payload_path)
     injection_speed = 2
     blocked_by_waf_counter = 0
 
@@ -87,7 +87,7 @@ def ssrf_attack(driver, target_url):
 
     with open(payload_path, 'r', encoding='utf-8') as SSRF_payloads:
         for payload in SSRF_payloads:
-            driver.get(target_url + f'rlfi.php?language={payload}&action=go?ip={MACHINE_IP}')
+            driver.get(target_url + f'rlfi.php?language={payload}&action=go?ip={machine_ip}')
 
             try:
                 WebDriverWait(driver, injection_speed).until(EC.alert_is_present())
@@ -96,17 +96,17 @@ def ssrf_attack(driver, target_url):
                 if alert_popped:
                     # print('[+] Server Side Request passed: ', payload)
                     time.sleep(injection_speed)
-                    utility.write_to_log('SSRF', payload)
+                    Utility.write_to_log('SSRF', payload)
                     alert_popped.accept()
 
             except TimeoutException:
                 try:
                     # Check if attack blocked by waf
-                    if utility.check_if_element_exists(driver, "xpath", "/html/body/center/h1"):
+                    if Utility.check_if_element_exists(driver, "xpath", "/html/body/center/h1"):
                         if "403 Forbidden" == driver.find_element_by_xpath("/html/body/center/h1").text:
                             blocked_by_waf_counter += 1
                     else:
-                        utility.write_to_log('SSRF', payload)
+                        Utility.write_to_log('SSRF', payload)
 
                 except NoSuchElementException:
                     print("ERROR!")
@@ -114,13 +114,12 @@ def ssrf_attack(driver, target_url):
 
     # Statistics #
     time.sleep(injection_speed)
-    print(f"\n[!] ~~~Server Side Request Forgery [ SSRF ] Results~~~ [!]")
+    print(f"\n[!] ~~~Server Side Request Forgery [SSRF] Results~~~ [!]")
     print(f"[+] Total Successful Attacks:", lines - blocked_by_waf_counter)
     print(f"[+] Attacks Blocked by WAF:", blocked_by_waf_counter)
 
 
 def xxe_attack(driver, target_url):
-
     """
         TODO: To check why I have one Payload which went threw with status code 200.
         Might be False positive?
@@ -129,29 +128,28 @@ def xxe_attack(driver, target_url):
     print('\n[+] Running XXE Attack Start')
 
     payload_path = 'Payloads/XXE_Payloads.txt'
-
+    attack_url_page = '/xxe-1.php'
     injection_speed = 3
     blocked_by_waf_counter = 0
 
-    driver.get(target_url + 'xxe-1.php')
+    driver.get(target_url + attack_url_page)
 
     time.sleep(injection_speed)  # Wait Cookies To load
-    driver_cookies = utility.get_cookie_from_driver(driver)
+    driver_cookies = Utility.get_cookie_from_driver(driver)
 
     with open(payload_path, 'r', encoding='utf-8') as xxe_payloads:
-
         payloads = xxe_payloads.read().split('\n\n')
         lines = len(payloads)
 
         for payload in payloads:
-            res = requests.post(target_url + '/xxe-1.php', cookies=driver_cookies, data=payload)
+            res = requests.post(target_url + attack_url_page, cookies=driver_cookies, data=payload)
             if res.status_code == 403:
                 blocked_by_waf_counter += 1
             elif res.status_code == 200:
-                utility.write_to_log('XXE', payload)
+                Utility.write_to_log('XXE', payload)
 
         # Statistics #
         time.sleep(injection_speed)
-        print(f"\n[!] ~~~XML external entity [ XXE ] Results~~~ [!]")
+        print(f"\n[!] ~~~XML external entity [XXE] Results~~~ [!]")
         print(f"[+] Total Successful Attacks:", lines - blocked_by_waf_counter)
         print(f"[+] Attacks Blocked by WAF:", blocked_by_waf_counter)

