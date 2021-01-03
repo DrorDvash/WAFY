@@ -31,7 +31,7 @@ def os_injection_attack(driver, target_url):
                 if utility.check_if_element_exists(driver, "xpath", "//div[@id='main']/p[@align='left']"):
                     if "Server: 127.0.0.53" not in driver.find_element_by_xpath("//div[@id='main']/p[@align='left']").text:
                         success_counter += 1
-                        utility.write_to_log('XSS', payload)
+                        utility.write_to_log('OS Injection', payload + '\n')
 
                 # Check if attack blocked by waf
                 elif utility.check_if_element_exists(driver, "xpath", "/html/body/center/h1"):
@@ -69,7 +69,7 @@ def html_injection_attack(driver, target_url):
                 # Look for success
                 if utility.check_if_element_exists(driver, "id", "hacker"):
                     success_counter += 1
-                    utility.write_to_log('XSS', payload)
+                    utility.write_to_log('HTML Injection', payload + '\n')
                 # Check if attack blocked by waf
                 elif utility.check_if_element_exists(driver, "xpath", "/html/body/center/h1"):
                     if "403 Forbidden" == driver.find_element_by_xpath("/html/body/center/h1").text:
@@ -100,7 +100,7 @@ def iframe_injection_attack(driver, target_url):
             if utility.check_if_element_exists(driver, "tag_name", "iframe", True, "src"):
                 if "attacker" in driver.find_element_by_tag_name("iframe").get_attribute("src") or check_if_element_exists(driver, "id", "attacker"):
                     success_counter += 1
-                    utility.write_to_log('XSS', payload)
+                    utility.write_to_log('IFRAME Injection', payload + '\n')
 
             # Check if attack blocked by waf
             elif utility.check_if_element_exists(driver, "xpath", "/html/body/center/h1"):

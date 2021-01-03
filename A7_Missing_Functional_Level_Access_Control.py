@@ -37,9 +37,10 @@ def lfi_rfi_attack(driver, target_url):
                 if utility.check_if_element_exists(driver, "xpath", "/html/body/center/h1"):
                     if "403 Forbidden" == driver.find_element_by_xpath("/html/body/center/h1").text:
                         blocked_by_waf_counter += 1
+                else:
+                    utility.write_to_log('LFI / RFI', payload)
             except NoSuchElementException:
                 print("ERROR!")
-                utility.write_to_log('LFI / RFI', payload)
                 # print('[+] Path Traversal Attack passed: ', payload.strip())
 
     # for file in file_list:
@@ -94,7 +95,6 @@ def ssrf_attack(driver, target_url):
                 alert_popped = driver.switch_to.alert
                 if alert_popped:
                     # print('[+] Server Side Request passed: ', payload)
-                    blocked_by_waf_counter += 1
                     time.sleep(injection_speed)
                     utility.write_to_log('SSRF', payload)
                     alert_popped.accept()
