@@ -14,6 +14,7 @@ from selenium.webdriver.common.keys import Keys
 from prettytable import PrettyTable
 import time
 import utility
+import argparse
 
 PATH = r".\chromedriver.exe"
 
@@ -113,9 +114,9 @@ def print_menu():
 
 def get_credentials():
     # Get Credentials
-    parser = utility.argparse.ArgumentParser(description='Short sample app')
+    parser = argparse.ArgumentParser(description='Short sample app')
     parser.add_argument('-u', dest='username', type=str, required=True)
-    parser.add_argument('-p', dest='password', action=utility.PasswordPromptAction, type=str, required=True)
+    parser.add_argument('-p', dest='password', type=str, required=True)
     parser.add_argument('-target', dest='target_url', type=str, required=True)
     return vars(parser.parse_args())
 
