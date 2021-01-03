@@ -7,7 +7,7 @@ from prettytable import PrettyTable
 import time
 import utility
 
-PATH = r"C:\Program Files (x86)\chromedriver.exe"
+PATH = r".\chromedriver.exe"
 
 
 def main():
