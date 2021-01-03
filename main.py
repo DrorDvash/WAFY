@@ -21,7 +21,8 @@ PATH = r".\chromedriver.exe"
 
 def main():
     # Get Credentials
-    creds = get_credentials()
+    creds = utility.add_slash(get_credentials())
+    print(creds['target_url'])
     while len(creds) > 3:
         creds()
 

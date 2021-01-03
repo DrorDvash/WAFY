@@ -2,6 +2,7 @@ import time
 import socket
 from urllib.parse import urlsplit
 from selenium.common.exceptions import NoSuchElementException
+import os
 
 """"
 
@@ -9,7 +10,8 @@ Utility File for global Functions
 
 """
 
-def get_cookie_from_driver(driver):
+def get_cookie_from_driver(driver) -> dict:
+
     time.sleep(5)  # Wait Cookies To load
     driver_cookies = driver.get_cookies()
     return {c['name']: c['value'] for c in driver_cookies}
@@ -54,3 +56,12 @@ def clean_log():
 
     with open('log.txt', "w"):
         pass
+
+
+def add_slash(creds_dict):
+
+    if creds_dict['target_url'][-1] != '/':
+        creds_dict['target_url'] = creds_dict['target_url'] + '/'
+        return creds_dict
+    else:
+        return creds_dict
