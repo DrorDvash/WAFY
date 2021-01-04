@@ -12,7 +12,7 @@ import Injections
 import Cross_Site_Scripting_XSS
 import Unauthorized_Access_Control
 
-PATH = r"""C:\Program Files (x86)\chromedriver.exe"""
+PATH = r"""chromedriver.exe"""
 
 
 def main():
@@ -90,8 +90,8 @@ def init(username, password, target_url):
     options.add_argument('--ignore-certificate-errors')
     options.add_argument('--incognito')
     options.add_argument('--headless')
-    driver = webdriver.Chrome(executable_path=PATH, options=options)
-    # driver = webdriver.Chrome(options=options)
+    # driver = webdriver.Chrome(executable_path=PATH, options=options)
+    driver = webdriver.Chrome(options=options)
 
     # Login to website
     driver.get(target_url)
