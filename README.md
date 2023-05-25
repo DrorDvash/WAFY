@@ -1,3 +1,3 @@
 # WAFY
-7f000001.8c527903.rbndr.us
-https://7f000001.8c527903.rbndr.us/
+
+https://a9fea9fe.8c527903.rbndr.us/
